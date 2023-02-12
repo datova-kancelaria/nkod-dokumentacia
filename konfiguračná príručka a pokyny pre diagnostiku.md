@@ -199,20 +199,19 @@ V případě problému s Pod doporučujeme získat chybový výstup a následně
 Kubernetes se totiž bude snažit Pod opakovaně vytvářet.
 Díky konfiguraci stahování Docker image pro každé vytvoření může snadno dojít k překročení počtu stažení Docker image z externího repository.
 
-<!-- ## 6. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE -->
+## 6. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE
+https://github.com/datova-kancelaria/nkod-dokumentacia
 
-## 6. SÚVISIACA DOKUMENTÁCIA
+## 7. SÚVISIACA DOKUMENTÁCIA
 
 * <a href="aplikačná príručka.md">Aplikační příručka</a>
 * <a href="inštalačná príručka a pokyny na inštaláciu.md">Inštalačná príručka a pokyny na inštaláciu (úvodnú/opakovanú)</a>
 * <a href="používateľská príručka.md">Uživatelská příručka</a>
 
-## 7. ZOZNAM INŠTALAČNÝCH MÉDIÍ
+## 8. ZOZNAM INŠTALAČNÝCH MÉDIÍ
 
 Instalace NKOD specifického kódu se provádí z [NKOD-SW] repositáře.
 Definice pipeline pro LinkedPipes ETL je uložena v [NKOD-PIPELINE] repositáři.
-
-<!-- ## 9. PRÍLOHY -->
 
 [NKOD-PIPELINE]: https://github.com/datova-kancelaria/nkod-pipeline "NKOD Pipeline"
 [NKOD-SW]: https://github.com/datova-kancelaria/nkod-software "NKOD Software"

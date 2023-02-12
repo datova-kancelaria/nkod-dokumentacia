@@ -106,8 +106,6 @@ Stažené pipeliny a templaty jsou následně zkopírovány do úložiště Link
 
 URL repositáře je nastavené v konfiguračním souboru ```./configuration/nodc-configuration.properties```.
 
-<!-- ## 6. NÁVRATOVÉ KÓDY -->
-
 [LinkedPipes ETL]: https://etl.linkedpipes.com "LinkedPipes ETL"
 [SPARQL]: https://www.w3.org/TR/sparql11-query/ "SPARQL"
 [Resource Description Framework (RDF)]: https://www.w3.org/TR/rdf11-concepts/ "RDF"

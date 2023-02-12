@@ -339,13 +339,9 @@ Hodnota ```{identity-domain}``` je zadána v procesu přihlášení do OCI.
 Podobnou chybu můžeme získat i při nasazení GraphDB do Kubernetes, kdy není možné image stáhnout z OCI Container Registry.
 V takovém případě je třeba zkontrolovat přihlašovací údaje a tajemství ```oci-registry-secret```.
 
-<!-- ## 6. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE -->
+## 6. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE
+https://github.com/datova-kancelaria/nkod-dokumentacia
 
-<!-- ## 6. SÚVISIACA DOKUMENTÁCIA -->
-
-<!-- ## 8. ZOZNAM PRÍSLUŠNÝCH MÉDIÍ -->
-
-<!-- ## 9. PRÍLOHY A ROZDEĽOVNÍK -->
 
 [LinkedPipes ETL]: https://etl.linkedpipes.com "LinkedPipes ETL"
 [SPARQL]: https://www.w3.org/TR/sparql11-query/ "SPARQL"
