@@ -1,0 +1,2 @@
+# nkod-dokumentacia
+Dokumentácia NKOD
