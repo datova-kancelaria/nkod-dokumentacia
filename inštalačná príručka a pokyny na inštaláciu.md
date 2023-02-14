@@ -36,13 +36,21 @@ Provoz každé z komponent požaduje 16GB operační paměti a jedno OCPU, kter�
 Výše uvedené komponenty nelze v rámci clusteru replikovat.
 Z toho důvodu je postačují, aby měl cluster tři výpočetní instance (worker nodes).
 
+Při instalaci se počítá s využitím Let's Encrypt pro získání HTTPS certifikátu.
+Z tohoto důvodu je nutné mít přístup k nastavení DNS pro cílovou doménu nasazení.
+
 ## 4. POSTUP INŠTALÁCIE (ÚVODNEJ / OPAKOVANEJ)
+
+Instalace se prování na základě obsahu repozitáře [NKOD-SW].
+Tento repozitář obsahuje větve main a develop. 
+Větev main by měla být nasazena na produkční prostředí, větev develop pak na prostředí testovací.
 
 ### 4.1 Popis inštalácie SERVEROVEJ ČASTI
 
 Serverová část řešení je nasazena do Kubernetes clusteru na OCI.
 Uvedené příkazy je potřeba pouštět OCI Cloud Shell připojeném do sítě Kubernetes.
 Připojení ke správné síti můžeme otestovat funkčností příkazu ```kubectl```.
+Dále je třeba mít zvolené správný Compartment, do kterého budeme nasazení provádět.
 
 #### 4.1.1 Zjištění informací o clusteru
 
@@ -51,11 +59,11 @@ Pro potřeby instalace je třeba zjistit základní informace o OCI.
 * _{Compartment}_
 * _{Virtual Cloud Network}_
 * _{Subnet}_
+* Veřejný _{Subnet}_ pro Load Balancer
 
-Tyto hodnoty by nám měl sdělit správce OCI do kterého provádíme instalaci.
-Pro interakci s Kubernetes je téměř vždy třeba znát OCID daného zdroje, nikoliv jeho lidsky čitelné pojmenování.
-
-**TODO:** Vypsat jak konkrétně to je pro test/produkci?
+Tyto hodnoty by nám měl sdělit správce OCI do kterého provádíme instalaci, pravděpodobně v jejich lidsky čitelné podobě.
+Například _{Availability Domain}_ může mít hodnotu `TREJ:EU-FRANKFURT-1-AD-1`.
+Pro některé z těchto hodnot bude třeba znát i jejich OCID.
 
 #### 4.1.2 OCI File Systems
 
@@ -68,9 +76,11 @@ Nicméně z důvodu snazší instalace a lepší použitelnosti jsou úložišt�
 Samotný _File System_ poskytuje pouze datové úložiště, pro jehož použití musíme definovat _Export Path_, která je dostupná přes _Mount Target_.
 Neb je _Mount Target_ schopen obsloužit více _File System_, využijeme pro jednoduchost pouze jedné jeho instance. 
 
+Do správy _File System_ je možné se navigovat z hlavního menu přes _Storage_ a následně _File System_.
 Následující seznam obsahuje údaje nezbytné pro [vytvoření _File System_](https://docs.oracle.com/en-us/iaas/Content/File/Tasks/creatingfilesystems.htm#Creating_File_Systems):
 * NODC-Website
   * Name: NODC-Website
+  * Availability Domain: _{Availability Domain}_
   * Compartment: _{Compartment}_
   * Export path: /website
   * Mount name: MountTarget-NODC
@@ -78,16 +88,19 @@ Následující seznam obsahuje údaje nezbytné pro [vytvoření _File System_](
   * Subnet: _{Subnet}_
 * NODC-Registration
   * Name: NODC-Registration
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /registration
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
 * NODC-LinkedPipes-Storage
   * Name: NODC-LinkedPipes-Storage
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /linkedpipes-storage
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
 * NODC-Certificate
   * Name: NODC-LinkedPipes-Certificate
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /certificate
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
@@ -107,7 +120,9 @@ Pro potřeby instalace vyžijeme definice z repozitáře [NKOD-SW].
 Nejsnazším řešením je repozitář naklonovat do domovského adresáře v OCI Cloud Shell:
 ```shell
 git clone https://github.com/datova-kancelaria/nkod-software.git
+git checkout main
 ```
+V případě nasazení do testovacího prostředí je třeba změnit branch ve druhém řádku z `main` na `develop`.
 V dalších krocích předpokládáme, že se uživatel nachází v kořeni naklonovaného repozitáře, tedy adresáři ```./nkod-software/```.
 
 #### 4.1.4 Kubernetes jmenné prostory
@@ -173,8 +188,10 @@ Hned na úvod je třeba upozornit na skutečnost, že smazáním Load Balanceru 
 Z výše uvedeného důvodu doporučujeme po vytvoření Load Balanceru nemazat.
 
 Podobně jako u souborových systémů je třeba i zde upravit definici zdroje.
-V tomto případě je třeba nahradit hodnotu ```# {Subnet}``` v souboru ```./k8s/oci/website-load-balancer.yaml ```.
-Hodnotu pro nahrazení jsme získali dle sekce 4.1.1 Zjištění informací o clusteru.
+V tomto případě je třeba nahradit hodnotu ```# {Subnet}``` v souboru ```./k8s/oci/website-load-balancer.yaml```.
+Dle sekce 4.1.1 Zjištění informací o clusteru jsem získali lidsky čitelné jméno subnetu pro Load Balancer.
+Zde je nicméně třeba vložit OCID, to je možné zjistit ze webového rozhraní _Networking_, _Virtual Cloud Networks_ sekce subnets.
+
 Jakmile budou soubor upraven, můžeme vytvořit definici:
 ```shell
 kubectl apply -f website-load-balancer.yaml
