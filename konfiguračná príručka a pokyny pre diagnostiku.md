@@ -72,6 +72,15 @@ kubectl delete --namespace=nodc deployment/nodc-website-deployment
 kubectl apply -f ./k8s/certificate-manager/update-certificate.yaml
 kubectl apply -f ./k8s/website/website.yaml
 ```
+Po ověření úspěšného doběhnutí je vhodné Job smazat:
+```shell
+kubectl delete job update-certificate.yaml --namespace=nodc
+```
+
+Alternativně je možné deployment nemazat ale upravit počet instancí pomocí příkazu:
+```
+kubectl scale deploy nodc-website-deployment --replicas=0 --namespace=nodc
+```
 
 ### 4.2 Konfigurácia a postup pre Cloud riešenie
 

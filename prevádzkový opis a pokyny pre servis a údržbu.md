@@ -328,6 +328,36 @@ NKOD nespravuje uživatelské účty, u kterých by bylo potřeba řešit změnu
 
 ## 18. POSTUP RIEŠENIA PORUCHOVÝCH A HAVARIJNÝCH STAVOV
 
+Bežnou součástí řešení problému je nahládnutí do logů systémů. 
+Tento dokument uvažuje pouze logy NKOD, nikoliv logy generované na úrovni Kubernetes či OCI. 
+
+Za modul `Webové stránky` generuje logy z hlavního procesu NginX. 
+Logy jsou generovány dle výchozího nastavení a ukládány do:
+- `/var/log/nginx/error.log`
+- `/var/log/nginx/access.log`
+Kde druhý slouží pro logování přístupů.
+V případě využitého NginX image jsou tyto soubory jen symbolické linky na `/dev/stderr` a `/dev/stdout`.
+Logy tedy nejsou uloženy do trvalého úložiště ale pouze zobrany na chybový a standartní výstup.
+
+Modul `RDF úložiště` implementovaný GraphDB je konfigurován pomocí logback.xml. 
+Ten je možné najít v [NKOD-SW] `components/graphdb/conf/logback.xml`.
+Ve výchozí konfiguraci se logy uchovávají po dobu 14 dní.
+Velikost jednoho logovacího souboru je 500MB, což při počtu 10 logovacích souborů vyžaduje 5GB místa pro logy.
+Logy jsou uloženy v `nodc-graphdb-pvc` který má velikost 16GB.
+
+Modul `Metadatový procesor - LinkedPipes ETL` provádí logování na úrovni svých komponent.
+Komponenta `frontned` neukládá logy an disk a dává je pouze na standartní výstup. 
+Ostatní komponenty ukládají logy do adresáře `/data/lp-etl/logs` s týdenní rotací. 
+Zde je vhodné připomenout, že tato cesta je mapována různé.
+Pro komponentu `storage` je cesta namapována do File Storage skrze `nodc-linkedpipes-storage-pvc`.
+Pro komponenty `executor` a `executor-monitor` pak do Block Storage skrze `nodc-linkedpipes-executor-pvc`.
+Rotace logů pro tyto komponenty je nastavena na jeden týden.
+
+Kromě těchto logů jsou ukládány i logy k jednotlivým spuštěním pipeline.
+Tyto logy jsou opět ukládány skrze `nodc-linkedpipes-executor-pvc`.
+Při testovacím provozu byla velikost logů pod 100MB, velikost adresářů se spuštěními pipeline pak 16GB.
+Je nicméně třeba zdůraznit, že velikost adresářů poroste s množstvím zpracovávaných dat.
+
 ### 18.1. Registrácia a hlásenie poruchových a havarijných stavov.
 
 TODO: vlastník/provozovatel

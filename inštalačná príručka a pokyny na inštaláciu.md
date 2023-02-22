@@ -36,13 +36,21 @@ Provoz každé z komponent požaduje 16GB operační paměti a jedno OCPU, kter�
 Výše uvedené komponenty nelze v rámci clusteru replikovat.
 Z toho důvodu je postačují, aby měl cluster tři výpočetní instance (worker nodes).
 
+Při instalaci se počítá s využitím Let's Encrypt pro získání HTTPS certifikátu.
+Z tohoto důvodu je nutné mít přístup k nastavení DNS pro cílovou doménu nasazení.
+
 ## 4. POSTUP INŠTALÁCIE (ÚVODNEJ / OPAKOVANEJ)
+
+Instalace se prování na základě obsahu repozitáře [NKOD-SW].
+Tento repozitář obsahuje větve main a develop. 
+Větev main by měla být nasazena na produkční prostředí, větev develop pak na prostředí testovací.
 
 ### 4.1 Popis inštalácie SERVEROVEJ ČASTI
 
 Serverová část řešení je nasazena do Kubernetes clusteru na OCI.
 Uvedené příkazy je potřeba pouštět OCI Cloud Shell připojeném do sítě Kubernetes.
 Připojení ke správné síti můžeme otestovat funkčností příkazu ```kubectl```.
+Dále je třeba mít zvolené správný Compartment, do kterého budeme nasazení provádět.
 
 #### 4.1.1 Zjištění informací o clusteru
 
@@ -51,6 +59,10 @@ Pro potřeby instalace je třeba zjistit základní informace o OCI.
 * _{Compartment}_
 * _{Virtual Cloud Network}_
 * _{Subnet}_
+* OCI veřejného _{Subnet}_ pro Load Balancer
+* jméno domény
+* email na kontaktní osobu pro HTTPS certifikát
+* instance Kubernetes do které budeme nasazovat
 
 Tyto hodnoty by nám měl sdělit správce OCI do kterého provádíme instalaci.
 Pro interakci s Kubernetes je téměř vždy třeba znát OCID daného zdroje, nikoliv jeho lidsky čitelné pojmenování.
@@ -78,9 +90,11 @@ Nicméně z důvodu snazší instalace a lepší použitelnosti jsou úložišt�
 Samotný _File System_ poskytuje pouze datové úložiště, pro jehož použití musíme definovat _Export Path_, která je dostupná přes _Mount Target_.
 Neb je _Mount Target_ schopen obsloužit více _File System_, využijeme pro jednoduchost pouze jedné jeho instance. 
 
-Následující seznam obsahuje údaje nezbytné pro [vytvoření _File System_](https://docs.oracle.com/en-us/iaas/Content/File/Tasks/creatingfilesystems.htm#Creating_File_Systems):
+Do správy _File System_ je možné se navigovat z hlavního menu přes _Storage_ > _File System_.
+Následující seznam obsahuje údaje nezbytné pro [vytvoření _File System_](https://docs.oracle.com/en-us/iaas/Content/File/Tasks/creatingfilesystems.htm#Creating_File_Systems), budeme vytvářet `File System for NFS`:
 * NODC-Website
   * Name: NODC-Website
+  * Availability Domain: _{Availability Domain}_
   * Compartment: _{Compartment}_
   * Export path: /website
   * Mount name: MountTarget-NODC
@@ -88,22 +102,25 @@ Následující seznam obsahuje údaje nezbytné pro [vytvoření _File System_](
   * Subnet: _{Subnet}_
 * NODC-Registration
   * Name: NODC-Registration
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /registration
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
 * NODC-LinkedPipes-Storage
   * Name: NODC-LinkedPipes-Storage
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /linkedpipes-storage
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
 * NODC-Certificate
-  * Name: NODC-LinkedPipes-Certificate
+  * Name: NODC-Certificate
+  * Availability Domain: _{Availability Domain}_
   * Compartment:  _{Compartment}_
   * Export path: /certificate
   * Vyberme existující _Mount Target_ vytvořený pro první _File System_
 
 Pro další kroky v instalaci bude třeba si zjistit následující informace o vytvořených objektech: 
-* OCID pro NODC-LinkedPipes-Storage
+* OCID pro NODC-Storage
 * OCID pro NODC-Registration
 * OCID pro NODC-Website
 * OCID pro NODC-Certificate
@@ -111,16 +128,29 @@ Pro další kroky v instalaci bude třeba si zjistit následující informace o 
 
 Všechny tyto hodnoty je možné zjistit skrze webové rozhraní v detaily jednotlivých objektů.
 
-#### 4.1.3 Projektový repozitář
+#### 4.1.3 Nastavení Cloud Shell
+
+V dalších krocích budeme využívat OCI Cloud Shell.
+
+Za účelem práce s Kubernetes je třeba být připojený do odpovídající sítě a nastavit připojení ke Kubernetes.
+K nastavení instance Kubernetes je třeba provést následující kroky:
+- Navigovat se na _Developers Services_ > _Kubernetes Clusters (OKE)_.
+- Zde si najdeme cílovou instanci Kubernetes a otevřeme její detail.
+- Po stisku tlačítka _Access Cluster_ se zobrazí instrukce pro konfiguraci  OCI Cloud Shell.
+
+#### 4.1.4 Projektový repozitář
 
 Pro potřeby instalace vyžijeme definice z repozitáře [NKOD-SW].
-Nejsnazším řešením je repozitář naklonovat do domovského adresáře v OCI Cloud Shell:
+Nejsnazším řešením je repozitář naklonovat do domovského adresáře v OCI Cloud Shell.
+V případě nasazení do testovacího prostředí je třeba změnit branch ve druhém řádku z `main` na `develop`.
 ```shell
-git clone https://github.com/datova-kancelaria/nkod-software.git
+git clone https://github.com/datova-kancelaria/nkod-software.git 
+cd nkod-software
+git checkout main
 ```
 V dalších krocích předpokládáme, že se uživatel nachází v kořeni naklonovaného repozitáře, tedy adresáři ```./nkod-software/```.
 
-#### 4.1.4 Kubernetes jmenné prostory
+#### 4.1.5 Kubernetes jmenné prostory
 
 Všechny Kubernetes objekty NKOD jsou umístěny ve jmenném prostoru.
 Ten je možné vytvořit následujícím příkazem:
@@ -128,10 +158,7 @@ Ten je možné vytvořit následujícím příkazem:
 kubectl apply -f ./k8s/namespace.yaml
 ```
 
-*Poznámka*: Ačkoliv je možné jmenné prostory tvořit poměrně snadno z příkazové řádky, umístíme je do souboru.
-Důvodem je menší počet příkazů a snazší přidání nových jmenných prostorů bez změny procesu instalace.
-
-#### 4.1.5 Propojení Kubernetes a OCI
+#### 4.1.6 Propojení Kubernetes a OCI
 
 V tomto kroku budeme vytváře Kubernetes objekty, které se napojují na objekty v OCI.
 Do této kategorie patří zejména datová úložiště vytvořená v 4.1.2 OCI File Systems ale i další OCI specifické objekty.
@@ -183,17 +210,27 @@ Hned na úvod je třeba upozornit na skutečnost, že smazáním Load Balanceru 
 Z výše uvedeného důvodu doporučujeme po vytvoření Load Balanceru nemazat.
 
 Podobně jako u souborových systémů je třeba i zde upravit definici zdroje.
-V tomto případě je třeba nahradit hodnotu ```# {Subnet}``` v souboru ```./k8s/oci/website-load-balancer.yaml ```.
-Hodnotu pro nahrazení jsme získali dle sekce 4.1.1 Zjištění informací o clusteru.
+V tomto případě je třeba nahradit hodnotu ```# {Subnet}``` v souboru ```./k8s/oci/website-load-balancer.yaml```.
+Dle sekce 4.1.1 Zjištění informací o clusteru jsem získali lidsky čitelné jméno subnetu pro Load Balancer.
+Zde je nicméně třeba vložit OCID, to je možné zjistit ze webového rozhraní _Networking_, _Virtual Cloud Networks_ sekce subnets.
+
 Jakmile budou soubor upraven, můžeme vytvořit definici:
 ```shell
-kubectl apply -f website-load-balancer.yaml
+kubectl apply -f ./k8s/oci/website-load-balancer.yaml
 ```
 
-#### 4.1.6 Konfigurace a tajemství
+#### 4.1.7 Nastavení DNS
+
+Na konci předchozího kroku jsem vytvořili veřejný Load Balancer.
+V tomto kroku je zapotřebí nastavit odpovídající DNS záznam.
+Veřejnou IP adresu Load Balanceru je možné zjistit pomocí příkazu:
+```
+kubectl get service nodc-public --namespace-nodc
+```
+
+#### 4.1.8 Konfigurace a Secret
 
 Konfigurační soubory jsou umístěné v adresáři ```./configuration```. 
-Za účelem editace doporučujeme si soubory zkopírovat a  následně upravit.
 Ve zbytku této sekce popíšeme význam jednotlivých konfiguračních souborů a jejich naplnění. 
 Nakonec uvedeme příkazy pro vytvoření konfigurace v Kubernetes z uvedených konfiguračních souborů. 
 
@@ -202,28 +239,55 @@ Tuto konfiguraci potřebujeme, neb Kubernetes nemá v základu přístup do OCI 
 Popis vytvoření soubor je možné najít v návodu [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
 Přihlášení do OCI Container registry je popsáno v [Logging in to Oracle Cloud Infrastructure Registry](https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionslogintoocir.htm), případně [Push an Image to Oracle Cloud Infrastructure Registry](https://www.oracle.com/webfolder/technetwork/tutorials/obe/oci/registry/index.html).
 
+Kroky k vytvoření souboru jsou následující:
+- Ze sekce _Identity_ > _My profile_ si zobrazíme záložku _Auth Tokens_.
+- Zde vytvoříme nový token, který si poznamenáme.-
+- Následně provedeme přihlášení do Docker repository.
+  To je možné s následujícím příkazem po dosazení hodnot:
+```shell
+docker login fra.ocir.io {object-storage-namespace}/{identity-domain}/{user-name}
+```
+  Kde ```{object-storage-namespace}``` je možné získat pomocí příkazu ```oci os ns get```.
+  Hodnota ```{identity-domain}``` je součástí uživatelského jména.
+- Jako heslo následně zadáme získaný token.
+- Tímto dojde k přihlášení k Docker repository a zápisu přihlašovacích údajů do ```~/.docker/config.json```.
+
 *nginx.conf* konfigurační soubor pro NginX, je možné nechat ve výchozí podobě.
 V tomto souboru jsou uložené cesty k certifikátům.
 
 *nodc-configuration.properties* konfigurace komponent v rámci NKOD. 
 Význam jednotlivých nastavení je popsán v konfiguračním souboru. 
-Soubor by nemělo být nutné měnit.
 
 *nodc-secret.properties* tento soubor obsahuje konfiguraci hesel.
 Význam jednotlivých nastavení je popsán v konfiguračním souboru. 
 
-Jakmile máme všechny konfigurační soubory připravené můžeme vytvořit konfigurace a tajemství:
+Jakmile máme všechny konfigurační soubory připravené můžeme vytvořit konfigurace a Secret:
 ```shell
 kubectl create configmap nodc-configuration --namespace=nodc --from-env-file=./configuration/nodc-configuration.properties 
-kubectl create configmap nodc-nginx --namespace=nodc --from-file=website.nginx=./configuration/nginx.conf
-
 kubectl create secret generic nodc-secret --namespace=nodc --from-env-file=./configuration/nodc-secret.properties
-kubectl create secret generic oci-registry-secret --namespace=nodc --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=./configuration/dockerconfig.json
 ```
-Neb nevytváříme konfigurace ze souborů ale přímo z příkazové řádky, je třeba specifikovat cílový jmenný prostor pomocí ```--namespace=nodc```.
 
+Pro vytvoření konfigurace pro Webovou komponentu využijeme s výchozí konfigurací je možné použít příkaz:
+```shell
+kubectl create configmap nodc-nginx --namespace=nodc --from-file=website.nginx=./configuration/nginx.conf
+```
+Výchozí konfigurace poskytuje přístup pouze k veřejným komponentám využívá HTTPS.
+Alternativně je možné využít konfigurační soubory ```nginx-no-https.conf``` či  ```nginx-no-vpn.conf```.
+První slouží k zpřístupnění všech komponent bez využití HTTPS. 
+Teto soubor je tedy možné využít pokud není k dispozici vhodná doména, nebo není třeba využití HTTPS.
+Druhý konfigurační soubor pak zpřístupní všechny komponenty skrze HTTPS. 
+Ani jedna z těchto konfigurací by neměla být nasazena na produkci, neb poskytuje přístup k interním komponentám NKOD.
 
-Ačkoliv je konfigurace propagována automaticky stejně jako tajemství, většina komponent čte konfiguraci pouze při vytvoření.
+V následujícím příkazu je nutné aby cesta vedla k souboru ```config.json``` pro Docker.
+V cestě není možný využít zkratky pro domovský adresář.
+Soubor se nachází v umístění ```~/.docker/config.json```.
+Neb tento soubor obsahuje přihlašovací údaje je třeba sní dle toho nakládat.
+
+```shell
+kubectl create secret generic oci-registry-secret --namespace=nodc --type=kubernetes.io/dockerconfigjson --from-file=.dockerconfigjson=../.docker/config.json
+```
+
+Ačkoliv je konfigurace propagována automaticky stejně jako Secret, většina komponent čte konfiguraci pouze při vytvoření.
 Z tohoto důvodu je třeba po změně konfigurace smazat Pody, nebo restartovat Deployment. 
 Za tímto účelem je možné využít následující příkaz:
 ```shell
@@ -231,68 +295,103 @@ kubectl rollout restart deploy {deployment-name} --namespace=nodc
 ```
 Kde ```{deployment-name}``` je třeba nahradit za jméno Deploymentu, jehož Pody se mají smazat a znovu vytvořit.
 
-### 4.1.7 Sestavení a publikace Docker image pro RDF úložiště
+### 4.1.9 Sestavení a publikace Docker image pro RDF úložiště
+
+Tento krok není možné provádět v prostředí OCI, dojde k selhání Docker build.
+Pro účely stažení souboru je naopak lepší využít lokálního zařízení.
+V takovém případě je třeba opět vytvořit kopii repozitáře [NKOD-SW].
 
 Pro potřeby RDF úložiště je zvolena databáze [Ontotext GraphDB Free].
 Tato verze bohužel nemá dostupný použitelný Docker image.
 Navíc verze ani není veřejně dostupná pro stažení a proto není možné Docker image automaticky vytvořit a publikovat na GitHubu.
 Z tohoto důvodu je třeba GraphDB image sestavit na jiném stroji a publikovat ho do OCI [Container Registry](https://docs.oracle.com/en-us/iaas/Content/Registry/Concepts/registryoverview.htm).
 Za účelem publikace je třeba mít zřízen přístup.
-Pro získání přístupu lze využít obdobný postup jako pro vytvoření *dockerconfig.json* souboru v sekci 4.1.6 Konfigurace a tajemství.
+Pro získání přístupu lze využít obdobný postup jako pro vytvoření *dockerconfig.json* souboru v sekci 4.1.6 Konfigurace a Secret.
 
 Chybějící soubor je možné stáhnout přímo ze stránek [Ontotext GraphDB Free] po registraci.
-Stažený soubor je nutné umístit do adresáře ```./components/graphdb```. 
+Je třeba stáhnout ```platform independent distribution package``` verzi, jméno se musí shodovat s definici v ```./components/graphdb/Dockerfile```.
+Stažený soubor je nutné umístit do adresáře ```./components/graphdb```.
 V současné verzi s verzí 10.0.0 a tedy názvem soubor ```graphdb-free-10.0.0-dist.zip```.
-V případě změny je nutné upravit ```GRAPHDB_URL``` v souboru ```./components/graphdb/Dockerfile```. 
+V případě změny je nutné upravit ```GRAPHDB_URL``` v souboru ```./components/graphdb/Dockerfile```.
 
-Po přidání chybějícího souboje je pak možné z  adresáři ```./components/graphdb``` provést sestavení a publikaci pomocí příkazů:
+Po přidání chybějícího souboru je pak možné z adresáři ```./components/graphdb``` provést sestavení a publikaci pomocí níže uvedených příkazů.
+Hodnotu ```{object-storage-namespace}``` je možné získat pomocí příkazu ```oci os ns get```.
+Hodnota ```{identity-domain}``` je součástí uživatelského jména.
 ```shell
 docker login -u '{object-storage-namespace}/{identity-domain}/{user-name}' fra.ocir.io
 docker build -t fra.ocir.io/{object-storage-namespace}/graphdb:10.0.0 .
 docker push fra.ocir.io/{object-storage-namespace}/graphdb:10.0.0
 ```
 
-Hodnotu ```{object-storage-namespace}``` je možné získat pomocí příkazu ```oci os ns get```.
-Hodnota ```{identity-domain}``` je součástí uživatelského jména.
-
-#### 4.1.8 Nasazení RDF úložiště GraphDB
+#### 4.1.9 Nasazení RDF úložiště GraphDB
 
 Nasazení se provede pomocí příkazu:
 ```shell
 kubectl apply -f ./k8s/graphdb/
 ```
 
-#### 4.1.9 Nasazení Metadatového procesoru - LinkedPipes ETL
+Po nasazení je vhodné zkontrolovat stav pomocí příkazu:
+```
+kubectl get pod --namespace=nodc
+```
+
+#### 4.1.10 Nasazení Metadatového procesoru - LinkedPipes ETL
 
 Nasazení se provede pomocí příkazu:
 ```shell
+kubectl apply -f ./k8s/website/website-pvc.yaml
 kubectl apply -f ./k8s/linkedpipes/
 ```
 
-#### 4.1.10 Získání HTTPS certifikátu
-
-Aby mohla probíhat HTTPS terminace uvnitř prostředí NKOD, je zapotřebí získat certifikát.
-Ten je třeba uložit do ```certificate-pvc```.
-
-Tento proces je možné provést pomocí příkazu:
-```shell
-kubectl apply -f ./k8s/certificate-manager/update-certificate.yaml
+Po nasazení je vhodné zkontrolovat stav pomocí příkazu:
 ```
+kubectl get pod --namespace=nodc
+```
+
+#### 4.1.11 Získání HTTPS certifikátu
+
+Aby mohla probíhat HTTPS terminace uvnitř prostředí NKOD, je zapotřebí získat HTTPS certifikát.
+V rámci řešení NKOD je certifikát ulože v ```certificate-pvc```.
+Ten je nutné vytvořit pomocí příkazu:
+```shell
+kubectl apply -f ./k8s/certificate-manager/certificate-pvc.yaml
+```
+
+Vydavatelem certifikátu byl zvolen Let's Encrypt, který omezuje platnost certifikátu na 3 měsíce.
+Let's Encrypt využije HTTP ověření přístupem na URL domény, pro které je certifikát požadován.
+
+Za tímto účelem je využití Kubernetes Job, který využívá Docker container z ```./components/certificate-manager```.
 Vytvořený job je rozpoznán jako cíl pro Load Balancer a je na něj po čas běhu vedena komunikace z portu 80 pro ověření.
 Z tohoto důvodu nesmí nesmí v době běhu být spuštěna komponenta Webová stránka.
-Příkaz vytvoří job pro Docker container z ```./components/certificate-manager```.
-Ten využívá Let's Encrypt pro získání certifikátu.
-Let's Encrypt využije HTTP ověření přístupem na URL domény, pro které je certifikát požadován.
-Je tedy třeba nastavit příslušný DNS záznam před tímto krokem.
-Certifikát má platnost 3 měsíce a je tedy třeba ho manuálně obnovovat.
 
-#### 4.1.11 Nasazení Webové stránky
+Job je možné vytvořit následujícím příkazem.
+```shell
+kubectl apply -f ./k8s/certificate-manager/create-certificate.yaml
+```
+
+Po nasazení je vhodné zkontrolovat stav Jobu pomocí příkazu:
+```
+kubectl get pod,job --namespace=nodc
+```
+
+Volitelně je pak možné smazat záznam o Jobu a jeho definici z Kubernetes pomocí příkazu:
+```shell
+kubectl delete job nodc-create-job --namespace=nodc
+```
+
+
+#### 4.1.12 Nasazení Webové stránky
 
 Jakmile máme k dispozici certifikát a běží všechny ostatní služby je možné nasadit Webovou stránku.
 Důvodem pro toto omezení je vlastnost NginX, který při startu ověřuje dostupnost služeb pro které funguje jako proxy.
 Nasazení se provede následujícím příkazem:
 ```shell
-kubectl apply -f ./k8s/website/
+kubectl apply -f ./k8s/website/website.yaml
+```
+
+Po nasazení je vhodné zkontrolovat stav Jobu pomocí příkazu:
+```
+kubectl get pod --namespace=nodc
 ```
 
 Součástí konfigurace webové stránky je seznam SPARQL dotazů.
@@ -304,15 +403,26 @@ To je možné pomocí následujícího příkazu:
 kubectl rollout restart deploy nodc-website-deployment --namespace=nodc
 ```
 
-#### 4.1.12 První spuštění
+#### 4.1.13 První spuštění
 
 Po první instalaci je třeba vytvořit kopii dat pro další zpracování v Metadatovém procesoru - LinkedPipes ETL.
-Toho je možné dosáhnout ručním spuštění pipeline ```00 - Cache```.
-Tuto pipeline je možné pustit opakovaně pro aktualizaci připravených dat.
+Před vytvořením kopie těchto dat je nutné provést inicializaci modulu. 
+Toho je možné dosáhnout s pomocí Kubernetes Job, které je možné spustit následujícím příkazem:
+```shell
+kubectl -f ./k8s/synchronize.yaml
+```
+Stejně jako dříve je vhodné zkontrolovat úspěšné doběhnutí Jobu. 
+Po jeho doběhnutí by měla instance LinkedPipes ETL obsahovat pipeline.
+Následně je třeba provést ručním spuštění pipeline ```00 - Cache```.
+Je vhodné opět zkontrolovat správné doběhnutí pipeline.
 
+Volitelně je pak možné smazat záznam o Jobu a jeho definici z Kubernetes pomocí příkazu:
+```shell
+kubectl delete job nodc-synchronize-job --namespace=nodc
+```
 TODO: je třeba upravit po zprovoznění VPN
 
-### 4.1.13 Manažer
+### 4.1.14 Manažer
 
 O pravidelné zpracování dat se stará komponenta Manažer.
 Tuto komponentu lze nasadit pomocí příkazu:
@@ -347,7 +457,7 @@ Hodnotu ```{object-storage-namespace}``` je možné získat pomocí příkazu ``
 Hodnota ```{identity-domain}``` je zadána v procesu přihlášení do OCI.
 
 Podobnou chybu můžeme získat i při nasazení GraphDB do Kubernetes, kdy není možné image stáhnout z OCI Container Registry.
-V takovém případě je třeba zkontrolovat přihlašovací údaje a tajemství ```oci-registry-secret```.
+V takovém případě je třeba zkontrolovat přihlašovací údaje a Secret ```oci-registry-secret```.
 
 ## 6. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE
 https://github.com/datova-kancelaria/nkod-dokumentacia
