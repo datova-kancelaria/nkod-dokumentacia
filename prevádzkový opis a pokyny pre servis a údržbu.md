@@ -177,19 +177,19 @@ NKOD běží v Kubernetes pod OCI.
 
 ## 5. UMIESTNENIE ZAKLADNEJ DOKUMENTÁCIE
 
-<!-- TODO link na github -->
+https://github.com/datova-kancelaria/nkod-dokumentacia
 
 ## 6. ZMENOVÉ KONANIE A SPOSOB INFORMOVANIA O ZMENÁCH V IS
 
-<!-- TODO: Napíše vlastník/provozovatel -->
+TODO: vlastník/provozovatel
 
 ## 7. ZODPOVEDNOSŤ ZA PREVÁDZKU JEDNOTLIVÝCH ČASTÍ IS
 
-<!-- TODO: Napíše vlastník/provozovatel -->
+TODO: vlastník/provozovatel
 
 ### 7.1. Zodpovednosť za jednotlivé vrstvy IS
 
-<!-- TODO: Napíše vlastník/provozovatel -->
+TODO: vlastník/provozovatel
 
 ### 7.2. Zodpovednosť prevádzkovateľa IS
 
@@ -200,15 +200,15 @@ Tento postup je popsán v <a href="konfiguračná príručka a pokyny pre diagno
 
 #### 7.2.1. Registrácia prístupov do IS
 
-<!-- TODO: Napíše provozovatel -->
+TODO: vlastník/provozovatel
 
 #### 7.2.2. Registrácia požiadaviek na zmenu IS
 
-<!-- TODO: Napíše vlastník -->
+TODO: vlastník/provozovatel
 
 #### 7.2.3. Monitoring IS
 
-<!-- TODO: Napíše provozovatel -->
+TODO: vlastník/provozovatel
 
 #### 7.2.4. Prístup k vývojovým prostriedkom
 
@@ -239,7 +239,7 @@ Kompletní obsah NKOD je generován při každém harvestování, není tedy tř
 
 ### 8.3. Monitoring prevádzky systému
 
-<!-- TODO: Napíše provozovatel -->
+TODO: vlastník/provozovatel
 
 ### 8.4. Postup pri zabezpečení 24 hod. pohotovostných služieb
 
@@ -304,7 +304,7 @@ V případě, že by se tak stalo, může dojít o opoždění harvestace.
 
 ## 14. SPOSOB PRIDEĽOVANIA PRÍSTUPOVÝCH PRÁV
 
-<!-- TODO: přidá provozovatel -->
+TODO: vlastník/provozovatel
 
 ### 14.1. Postup pri podávaní žiadostí o prístup
 
@@ -314,7 +314,7 @@ V případě, že by se tak stalo, může dojít o opoždění harvestace.
 
 ## 15. IDENTIFIKÁCIA VLASTNÍKA ÚDAJOV
 
-<!-- TODO: přidá vlastník -->
+TODO: vlastník
 
 ## 16. SPRAVOVANIE ČÍSELNÍKOV(platí len pre APL)
 
@@ -330,7 +330,7 @@ NKOD nespravuje uživatelské účty, u kterých by bylo potřeba řešit změnu
 
 ### 18.1. Registrácia a hlásenie poruchových a havarijných stavov.
 
-<!-- TODO: přidá vlastník -->
+TODO: vlastník/provozovatel
 
 ### 18.2. Zásahy na serveri (reštart a pod. správca servera).
 

@@ -38,7 +38,8 @@ Aktualizace NKOD probíhá zpravidla denně, v noci.
 
 # 3.1 URL s výstupními daty
 Kromě webové stránky samotné jsou vystavena i následující URL.
-Předpokládejme, že prefixem všech URL je `https://opendata.mirri.tech`.
+Pro produkční prostředí je prefixem všech URL `https://opendata.mirri.tech`. Na toto prostředí existuje i redirect z `https://data.gov.sk/sparql`.
+Pro testovací prostředí je prefixem všech URL `https://opendata-test.mirri.tech`.
 
 ## SPARQL endpoint NKOD
 - [`/api/sparql`](https://opendata.mirri.tech/api/sparql) - SPARQL endpoint NKOD

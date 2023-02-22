@@ -19,43 +19,43 @@ Tento plán vypracuje budoucí provozovatel NKOD a Portálu otevřených dat.
 
 ## 3. Kontaktné údaje:
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 ### 3.1. členov tímov „deploymentu“
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 ### 3.2. dodávateľov a servisných firiem
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 ### 3.3. klientov
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.1. Zvolávací strom členov tímu
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.2. Úlohy a zodpovednosti jednotlivých zamestnancov (členov tímov, tvorcov plánov a zamestnancov zodpovedných za ich udržiavanie)
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.3. Postupy (ako reagovať a zvládať incidenty)
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.4. Zdroje (určenie kľúčových zamestnancov, HW, Cloudu, SW, lokalít a vybavenia)
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.5. Opis plánovaného priebehu procesu obnovy
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 #### 3.3.6. Podmienky aktivácie plánov
 
-<!-- TODO: přidá provozovatel -->
+TODO: provozovatel
 
 ## 4. Kritické (hlavné) procesy
 
@@ -72,7 +72,8 @@ Stačí 24h, jelikož NKOD není kritickým systémem.
 NKOD je provozován v komerčním cloudu OCI.
 Žádné nadstavbové záložní řešení není vyžadováno.
 
-<!-- ## 5. Proces tvorby a realizácie (Plan-Do-Check-Act-Improve-Recovery)
+## 5. Proces tvorby a realizácie (Plan-Do-Check-Act-Improve-Recovery)
+TODO: provozovatel
 
 ### 5.1. Plan (identifikácia rizík a dopadov, identifikácia hrozieb, analýza informácií)
 
@@ -85,4 +86,4 @@ NKOD je provozován v komerčním cloudu OCI.
 ### 5.5. Improve
 
 ### 5.6. Recovery 
--->
+

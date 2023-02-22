@@ -55,7 +55,17 @@ Pro potřeby instalace je třeba zjistit základní informace o OCI.
 Tyto hodnoty by nám měl sdělit správce OCI do kterého provádíme instalaci.
 Pro interakci s Kubernetes je téměř vždy třeba znát OCID daného zdroje, nikoliv jeho lidsky čitelné pojmenování.
 
-**TODO:** Vypsat jak konkrétně to je pro test/produkci?
+Pro ilustraci, aktuální testovací prostředí má tyto parametry:
+* _{Availability Domain}_ `TREJ:EU-FRANKFURT-1-AD-1`, `TREJ:EU-FRANKFURT-1-AD-2`, `TREJ:EU-FRANKFURT-1-AD-3`
+* _{Compartment}_ `cloudmirri (root)/cmp-mirri/subcmp-opendata`
+* _{Virtual Cloud Network}_ `ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaavxy2x2qaomns3mpzaph3w6ieferg25rbgmcatkdcbnmasncz4nea`
+* _{Subnet}_ `ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaais3n3chzuupml4yy2g2i7z2glxp7xt3u5fqtlqbvh74btnv66fvq`
+
+Pro ilustraci, aktuální produkční prostředí má tyto parametry:
+* _{Availability Domain}_ `TREJ:EU-FRANKFURT-1-AD-1`, `TREJ:EU-FRANKFURT-1-AD-2`, `TREJ:EU-FRANKFURT-1-AD-3`
+* _{Compartment}_ `cloudmirri (root)/cmp-mirri/subcmp-opendata`
+* _{Virtual Cloud Network}_ `ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaavxy2x2qa3fng7ymqvhwdqpwkm55cfheehdfeymzjrwwxklbrfpqq`
+* _{Subnet}_ `ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaa2ue3etifv7j3uxkx325efgmndftbqlmr655kuoy7lk2fi4bkxzmq`
 
 #### 4.1.2 OCI File Systems
 
@@ -300,7 +310,7 @@ Po první instalaci je třeba vytvořit kopii dat pro další zpracování v Met
 Toho je možné dosáhnout ručním spuštění pipeline ```00 - Cache```.
 Tuto pipeline je možné pustit opakovaně pro aktualizaci připravených dat.
 
-<!-- TODO Using VPN -->
+TODO: je třeba upravit po zprovoznění VPN
 
 ### 4.1.13 Manažer
 
