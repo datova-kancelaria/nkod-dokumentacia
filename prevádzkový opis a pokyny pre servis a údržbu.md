@@ -106,7 +106,18 @@ Získání a případné obnovení certifikátu zajišťuje `nodc-certificate-up
 Ten je nutné spouštět manuálně se zastavením `nodc-website-deployment`.
 Důvodem je způsob ověření certifikátu Let's Encrypt skrze HTTP, z tohoto důvodu musí projít požadavky na `nodc-certificate-update-pod` a nikoliv `nodc-website-deployment`.
 
-### 3.2.4. Manažer
+### 3.2.4. Připojení na interní dokumenty
+
+Po připojení na VPN je možné přistoupit ke modulům `RDF úložiště` a `Metadatový procesor - LinkedPipes ETL`.
+Tyto moduly jsou přístupné skrze interní load balancery.
+
+Získání IP adresy je možné provést pomocí příkazu:
+```shell
+kubectl get service
+```
+Jedná se o hodnotu ve sloupci EXTERNAL-IP pro služby `nodc-graphdb-private` a `nodc-linkedpipes-private`.
+
+### 3.2.5. Manažer
 
 Modul Manažer je nasazený pomocí `nodc-manager-cronjob` a je zodpovědný za:
 * aktualizaci definic pipeline pro harvestování
@@ -128,7 +139,7 @@ Následně je možné pomocí HTTP provést spuštění harvestace přes `nodc-f
 Ačkoliv je možné skrze `nodc-frontend` a VPN pustit tedy harvestaci přímo, je třeba mít na paměti, že takové spuštění nepovede k aktualizaci dat.
 Pro aktualizaci dat je třeba provést manuální vytvoření jobu z `nodc-manager-cronjob`.
 
-### 3.2.5. Komunikačný model
+### 3.2.6. Komunikačný model
 
 ![Komunikace komponent](obrázky/prev%C3%A1dzkov%C3%BD%20opis%20a%20pokyny%20pre%20servis%20a%20%C3%BAdr%C5%BEbu/komunikace%20komponent.svg)
 Diagram komunikace komponent.
@@ -139,7 +150,7 @@ Komunikace mezi komponentami probíhá dvojím způsobem.
 
 Komunikace mezi moduly je popsána u jednotlivých modulů výše a znázorněna na diagramu komunikace komponent.
 
-### 3.2.6. Dátový model
+### 3.2.7. Dátový model
 
 Dátový model je popsaná v <a href="aplikačná príručka.md">Aplikační příručce</a> sekce 3.3 DÁTOVY MODEL APLIKÁCIE.
 

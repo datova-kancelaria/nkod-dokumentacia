@@ -438,6 +438,31 @@ Identifikátor může být například ```nodc-manager-cronjob-manual-20230110``
 kubectl create job --namespace=nodc --from=cronjob/nodc-manager-cronjob {job-name}
 ```
 
+### 4.1.15 Interní load balancery
+Pro snadný administrátorský přístupu k:
+* RDF úložišti GraphDB
+* Metadatového procesoru - LinkedPipes ETL
+Je možné vytvoření interních load balancerů. 
+Stejně jako v sekci 4.1.6 Propojení Kubernetes a OCI, bude zapotřebí provést editaci definic zdrojů.
+
+V tomto případě je třeba nahradit hodnotu ```# {Subnet}``` v souboru ```./k8s/oci/graphdb-load-balancer.yaml``` a ```./k8s/oci/linkedpipes-load-balancer.yaml```.
+Zde je třeba použít OCID pro _{Interního Subnet}_.
+Tento subnet nesmí být přístupný z venkovního prostředí!
+
+Jakmile jsou soubory upraveny, můžeme vytvořit jednotlivé load balancery:
+```shell
+kubectl apply -f ./k8s/oci/graphdb-load-balancer.yaml
+kubectl apply -f ./k8s/oci/linkedpipes-load-balancer.yaml
+```
+
+IP adresu vytvořených load balancerů je následně možné využít pro připojení skrze VPN k jednotlivým službám.
+
+Získání adresy je možné provést pomocí příkazu:
+```shell
+kubectl get service
+```
+Jedná se o hodnotu ve sloupci EXTERNAL-IP.
+
 ### 4.2 Popis Inštalácie KLIENTSKEJ ČASTI
 
 Klientskou částí je webová stránka pro dotazování nad RDF databází. 
