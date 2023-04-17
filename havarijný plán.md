@@ -21,23 +21,23 @@ Tento plán vypracuje budoucí provozovatel NKOD a Portálu otevřených dat.
 
 ### 3.1. Organizácia zodpovedajúca za nasadenie
 
-Národná agentúra pre sieťové a elektronické služby
-Kollárova 8
+Národná agentúra pre sieťové a elektronické služby<br>
+Kollárova 8<br>
 917 02 Trnava
 
 ### 3.2. Dodávateľ
 
-Univerzita Karlova
-Matematicko-fyzikální fakulta
-Ke Karlovu 3
-121 16 Praha 2
-Česko
+Univerzita Karlova<br>
+Matematicko-fyzikální fakulta<br>
+Ke Karlovu 3<br>
+121 16 Praha 2<br>
+Česko<br>
 
 ### 3.3. Klient
 
-Ministerstvo investícií, regionálneho rozvoja a informatizácie Slovenskej republiky
-Pribinova 25
-811 09 Bratislava
+Ministerstvo investícií, regionálneho rozvoja a informatizácie Slovenskej republiky<br>
+Pribinova 25<br>
+811 09 Bratislava<br>
 
 #### 3.3.1. Zvolávací strom členov tímu
 
