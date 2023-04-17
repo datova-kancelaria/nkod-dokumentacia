@@ -2,9 +2,11 @@
 
 ## 1. Rozsah platnosti 
 
-Toto je havarijný plán Národního katalogu otevřených dat (NKOD), části projektu OD2.0.
+Toto je havarijný plán Národního katalogu otevřených dat (NKOD), časti projektu OD2.0.
 
-Tento plán vypracuje budoucí provozovatel NKOD a Portálu otevřených dat.
+Projekt NKOD je prvou časťou webového portálu pre Centrálny portál otvorených dát.
+Detailná špecifikácia tohto havarijného plánu bude vypracovaná až v spojitosti s projektom - Webový portál pre NKOD, ktorý je v súčasnosti predmetom verejného obstarávania.
+Dovtedy beži projekt NKOD len v testovacej prevádzke.
 
 ## 2. Definície pojmov a skratiek 
 
