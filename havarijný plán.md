@@ -39,24 +39,6 @@ Ministerstvo investícií, regionálneho rozvoja a informatizácie Slovenskej re
 Pribinova 25<br>
 811 09 Bratislava<br>
 
-#### 3.3.1. Zvolávací strom členov tímu
-
-
-#### 3.3.2. Úlohy a zodpovednosti jednotlivých zamestnancov (členov tímov, tvorcov plánov a zamestnancov zodpovedných za ich udržiavanie)
-
-
-#### 3.3.3. Postupy (ako reagovať a zvládať incidenty)
-
-
-#### 3.3.4. Zdroje (určenie kľúčových zamestnancov, HW, Cloudu, SW, lokalít a vybavenia)
-
-
-#### 3.3.5. Opis plánovaného priebehu procesu obnovy
-
-
-#### 3.3.6. Podmienky aktivácie plánov
-
-
 ## 4. Kritické (hlavné) procesy
 
 ### 4.1. Stanovenie hodnôt RPO (Recovery Point Objective)
