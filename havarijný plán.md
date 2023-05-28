@@ -2,9 +2,11 @@
 
 ## 1. Rozsah platnosti 
 
-Toto je havarijný plán Národního katalogu otevřených dat (NKOD), části projektu OD2.0.
+Toto je havarijný plán Národního katalogu otevřených dat (NKOD), časti projektu OD2.0.
 
-Tento plán vypracuje budoucí provozovatel NKOD a Portálu otevřených dat.
+Projekt NKOD je prvou časťou webového portálu pre Centrálny portál otvorených dát.
+Detailná špecifikácia tohto havarijného plánu bude vypracovaná až v spojitosti s projektom - Webový portál pre NKOD, ktorý je v súčasnosti predmetom verejného obstarávania.
+Dovtedy beži projekt NKOD len v testovacej prevádzke.
 
 ## 2. Definície pojmov a skratiek 
 
@@ -19,43 +21,25 @@ Tento plán vypracuje budoucí provozovatel NKOD a Portálu otevřených dat.
 
 ## 3. Kontaktné údaje:
 
-TODO: provozovatel
+### 3.1. Organizácia zodpovedajúca za nasadenie
 
-### 3.1. členov tímov „deploymentu“
+Národná agentúra pre sieťové a elektronické služby<br>
+Kollárova 8<br>
+917 02 Trnava
 
-TODO: provozovatel
+### 3.2. Dodávateľ
 
-### 3.2. dodávateľov a servisných firiem
+Univerzita Karlova<br>
+Matematicko-fyzikální fakulta<br>
+Ke Karlovu 3<br>
+121 16 Praha 2<br>
+Česko<br>
 
-TODO: provozovatel
+### 3.3. Klient
 
-### 3.3. klientov
-
-TODO: provozovatel
-
-#### 3.3.1. Zvolávací strom členov tímu
-
-TODO: provozovatel
-
-#### 3.3.2. Úlohy a zodpovednosti jednotlivých zamestnancov (členov tímov, tvorcov plánov a zamestnancov zodpovedných za ich udržiavanie)
-
-TODO: provozovatel
-
-#### 3.3.3. Postupy (ako reagovať a zvládať incidenty)
-
-TODO: provozovatel
-
-#### 3.3.4. Zdroje (určenie kľúčových zamestnancov, HW, Cloudu, SW, lokalít a vybavenia)
-
-TODO: provozovatel
-
-#### 3.3.5. Opis plánovaného priebehu procesu obnovy
-
-TODO: provozovatel
-
-#### 3.3.6. Podmienky aktivácie plánov
-
-TODO: provozovatel
+Ministerstvo investícií, regionálneho rozvoja a informatizácie Slovenskej republiky<br>
+Pribinova 25<br>
+811 09 Bratislava<br>
 
 ## 4. Kritické (hlavné) procesy
 
@@ -71,19 +55,3 @@ Stačí 24h, jelikož NKOD není kritickým systémem.
 ### 4.3. Stratégia obnovy (hot site, Warm site, cold site)
 NKOD je provozován v komerčním cloudu OCI.
 Žádné nadstavbové záložní řešení není vyžadováno.
-
-## 5. Proces tvorby a realizácie (Plan-Do-Check-Act-Improve-Recovery)
-TODO: provozovatel
-
-### 5.1. Plan (identifikácia rizík a dopadov, identifikácia hrozieb, analýza informácií)
-
-### 5.2. Do (spracovanie stratégie, tvorba a implementácia plánov obnovy)
-
-### 5.3. Check (testovanie, aktualizácia a audit)
-
-### 5.4. Act (údržba a zlepšovanie)
-
-### 5.5. Improve
-
-### 5.6. Recovery 
-
