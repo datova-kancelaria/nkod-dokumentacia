@@ -102,9 +102,9 @@ Tento Deployment obsahuje Docker image nakonfigurovaného `nginx`.
 `nginx` v `nodc-website-deployment` provádí HTTPS terminaci.
 Certifikát pro terminaci je uložený na `nodc-certificate-pvc`.
 Důvodem nevyužití `Secret` je nemožnost měnit obsah `Secret` z Podu, certifikát by tak bylo třeba vkládat do `Secret` ručně.
-Získání a případné obnovení certifikátu zajišťuje `nodc-certificate-update-pod`.
+Získání a případné obnovení certifikátu zajišťuje `nodc-certificate-create-job`.
 Ten je nutné spouštět manuálně se zastavením `nodc-website-deployment`.
-Důvodem je způsob ověření certifikátu Let's Encrypt skrze HTTP, z tohoto důvodu musí projít požadavky na `nodc-certificate-update-pod` a nikoliv `nodc-website-deployment`.
+Důvodem je způsob ověření certifikátu Let's Encrypt skrze HTTP, z tohoto důvodu musí projít požadavky na `certificate-manager` v `nodc-certificate-create-job` a nikoliv `nodc-website-deployment`.
 
 ### 3.2.4. Připojení na interní dokumenty
 

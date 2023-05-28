@@ -64,23 +64,29 @@ Prvotní získání HTTPS certifikátů je popsáno v <a href="inštalačná pr�
 Platnost certifikátu vystaveného Let's Encrypt jsou tři měsíce.
 
 Při prodlužování certifikátu je třeba provést odstávku systému, respektive komponenty Webové stránky. 
+Toho je možné dosáhnout smazáním definice Deploymentu, nebo úpravou počtu instancí.
+Druhá možnost, doporučená, je popsána na konci této sekce.
 Následně je třeba spustit Job který provede obnovu certifikátu. 
-V posledním kroku je pak třeba opět pustit služby Webové stránky.
-Toto je možné provést pomocí příkazů:
+V posledním kroku je pak třeba opět pustit komponentu Webové stránky.
+
+Celý výše popsaný proces je možné provést pomocí příkazů:
 ```
 kubectl delete --namespace=nodc deployment/nodc-website-deployment
-kubectl apply -f ./k8s/certificate-manager/update-certificate.yaml
+kubectl apply -f ./k8s/certificate-manager/create-certificate.yaml
 kubectl apply -f ./k8s/website/website.yaml
 ```
-Po ověření úspěšného doběhnutí je vhodné Job smazat:
+
+Po ověření úspěšného doběhnutí je třeba Job smazat.
+Smazání je možné provést také až před další obnovou certifikátu.
 ```shell
-kubectl delete job update-certificate.yaml --namespace=nodc
+kubectl delete job nodc-certificate-create-job --namespace=nodc
 ```
 
-Alternativně je možné deployment nemazat ale upravit počet instancí pomocí příkazu:
+Alternativně je možné deployment nemazat komponenty Webové stránky, ale upravit počet instancí pomocí příkazu:
 ```
 kubectl scale deploy nodc-website-deployment --replicas=0 --namespace=nodc
 ```
+Obdobným příkazem je následně možné opět počet instancí na požadovaný počet.
 
 ### 4.2 Konfigurácia a postup pre Cloud riešenie
 
